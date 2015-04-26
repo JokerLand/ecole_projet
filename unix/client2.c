@@ -79,6 +79,10 @@ int main(int argc, char *argv[]){
 			printf("CLIENT - Inscription ko\n");
 			fin(0);
 		}
+		
+		while(1) {
+			
+		}
 	
 	
 }//END MAIN

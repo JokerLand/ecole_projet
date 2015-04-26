@@ -79,36 +79,36 @@ int main (int argc, char *argv[]) {
 			printf("Yop !\n");
 			if(FD_ISSET(sockfd, &rdfsAccept) ) { //Je check si le socket est bien dans l'ensemble pour ne pas devoir attendre une connection, histoire que le accepte ce passe directement
              
-			int tailleMessage;
-			temp = sizeof(skaddrClient);
-            
-            if((s2 = accept(sockfd, (struct sockaddr *) &skaddrClient, &t)) == -1){
-                perror("SERV - Erreur d'accept\n");
-				exit(1);
-			}
-            
-            printf("SERV - Un joueur connecte\n");
-			// Réception du premier message
-			tailleMessage = readMessage(s2, messageLecture);
-			if(messageLecture->type == INSCRIPTION) {
-				nouveauJoueur(messageLecture->message, s2, CONNECTION);
-				printf("SERV - %s inscrit", messageLecture->message);
+				int tailleMessage;
+				temp = sizeof(skaddrClient);
 				
-				messageEcriture->type = INSCRIPTIONOK; 
-				envoiMessageClient(s2, messageEcriture);
-				
-				if(p.inscrits == 1) {
-					alarm(10); // TODO remplacer par une constance
+				if((s2 = accept(sockfd, (struct sockaddr *) &skaddrClient, &t)) == -1){
+					perror("SERV - Erreur d'accept\n");
+					exit(1);
 				}
-            
-				maxSocket = s2 > maxSocket ? s2 : maxSocket;
-				s2 = 0;
-			} else {
-				// S'il demande pas l'inscritpion en premier, c'est que c'est un gars chelou, je préfère ne pas discuter avec lui
-				SYS(close(s2));
 				
+				printf("SERV - Un joueur connecte\n");
+				// Réception du premier message
+				tailleMessage = readMessage(s2, messageLecture);
+				if(messageLecture->type == INSCRIPTION) {
+					nouveauJoueur(messageLecture->message, s2, CONNECTION);
+					printf("SERV - %s inscrit", messageLecture->message);
+					
+					messageEcriture->type = INSCRIPTIONOK; 
+					envoiMessageClient(s2, messageEcriture);
+					
+					if(p.inscrits == 1) {
+						alarm(10); // TODO remplacer par une constance
+					}
+				
+					maxSocket = s2 > maxSocket ? s2 : maxSocket;
+					s2 = 0;
+				} else {
+					// S'il demande pas l'inscritpion en premier, c'est que c'est un gars chelou, je préfère ne pas discuter avec lui
+					SYS(close(s2));
+					
+				}
 			}
-        }
 		}
 		
 	}//END WHILE (1)

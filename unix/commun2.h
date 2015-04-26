@@ -11,7 +11,7 @@
 #define DECO -1 // Si le joueur est deconnecte
 #define CONNECTION -2 //Le joueur est en cours d'inscription
 #define INITSCORE -1
-#define MAX_JOUEURS 3
+#define MAX_JOUEURS 2
 
 #define SYS(CALL) (((CALL) == -1)? (perror(#CALL ":Error"), exit(1)):0)
 
