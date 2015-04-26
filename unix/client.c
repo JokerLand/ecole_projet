@@ -1,6 +1,10 @@
-#include "client2.h"
-#include "messages2.h"
-#include "commun2.h"
+// Projet Unix 2014-2015
+// GILLES Gaëtan & STEENPUT Mathieu
+// programme principale du client
+
+#include "client.h"
+#include "messages.h"
+#include "commun.h"
 
 
 client * c;

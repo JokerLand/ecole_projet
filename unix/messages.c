@@ -1,5 +1,8 @@
+// Projet Unix 2014-2015
+// GILLES Gaëtan & STEENPUT Mathieu
+// fonction utile pour l'envoi et la réception des messages
 
-#include "messages2.h"
+#include "messages.h"
 
 message * initMessage(){
     message * m;

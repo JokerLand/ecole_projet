@@ -1,3 +1,8 @@
+// Projet Unix 2014-2015
+// GILLES Gaëtan & STEENPUT Mathieu
+// libraire du programme client
+
+
 #ifndef Projet_Unix_client_h
 #define Projet_Unix_client_h
 

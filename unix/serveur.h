@@ -1,3 +1,7 @@
+// Projet Unix 2014-2015
+// GILLES Gaëtan & STEENPUT Mathieu
+// libraire du serveur
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/socket.h>
@@ -11,7 +15,7 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 
-#include "messages2.h"
+#include "messages.h"
 
 #define TIMEOUT_SEC 15
 

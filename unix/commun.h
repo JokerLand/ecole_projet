@@ -1,3 +1,7 @@
+// Projet Unix 2014-2015
+// GILLES Gaëtan & STEENPUT Mathieu
+// libraire commune du projet
+
 #ifndef Unix_projet
 #define Unix_projet
 

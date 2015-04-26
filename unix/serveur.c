@@ -1,4 +1,8 @@
-#include "serveur2.h"
+// Projet Unix 2014-2015
+// GILLES Gaëtan & STEENPUT Mathieu
+// programme principale du serveur
+
+#include "serveur.h"
 
 
 

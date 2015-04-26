@@ -1,16 +1,20 @@
-all: messages2.o client2 serveur2
+# Projet Unix 2014-2015
+# GILLES Gaëtan & STEENPUT Mathieu
+# makefile du projet unix
 
-serveur2 : serveur2.o
-	gcc -o serveur2 serveur2.o messages2.o
-	
-client2 : client2.o
-	gcc -o client2 client2.o messages2.o
-	
-serveur2.o : serveur2.c
-	gcc -c serveur2.c -o serveur2.o
+all: messages.o client serveur
 
-client2.o : client2.c
-	gcc -c  client2.c -o client2.o
+serveur : serveur.o
+	gcc -o serveur serveur.o messages.o
 	
-messages2.o : messages2.c
-	gcc -c messages2.c -o messages2.o
+client : client.o
+	gcc -o client client.o messages.o
+	
+serveur.o : serveur.c
+	gcc -c serveur.c -o serveur.o
+
+client.o : client.c
+	gcc -c  client.c -o client.o
+	
+messages.o : messages.c
+	gcc -c messages.c -o messages.o

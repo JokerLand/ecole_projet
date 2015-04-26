@@ -1,3 +1,7 @@
+// Projet Unix 2014-2015
+// GILLES Gaëtan & STEENPUT Mathieu
+// libraire pour les messages
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -12,8 +16,8 @@
 #include <netinet/in.h>
 #include <sys/mman.h>
 
-#include "commun2.h"
-#include "client2.h"
+#include "commun.h"
+#include "client.h"
 
 #define INSCRIPTION 1
 #define INSCRIPTIONOK 2
