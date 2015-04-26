@@ -23,6 +23,7 @@
 #define MONSCORE 6
 #define PARTIEKO 7
 #define LEAVE 8
+#define FERMERCLIENT 9
 #define BUFFERSIZE 40
 
 

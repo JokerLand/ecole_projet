@@ -77,12 +77,14 @@ int main(int argc, char *argv[]){
 	} else {
 		if(messageLecture->type == INSCRIPTIONKO)
 			printf("CLIENT - Inscription ko\n");
-			fin(0);
-		}
+		fin(0);
+	}
 		
-		while(1) {
-			
-		}
+	while(1) {
+		recv(sockfd, messageLecture, sizeof(message), 0);
+		if(messageLecture->type == FERMERCLIENT)
+			fin(0);
+	}
 	
 	
 }//END MAIN

@@ -167,6 +167,17 @@ void initServeur(int *sockfd) {
 
 
 void fin(int socket){
-	SYS(close(socket));// Faudrait pas que je ferme tout les sockets enregistrer ? 
+	//SYS(close(socket));// Faudrait pas que je ferme tout les sockets enregistrer ?
+	
+	// On avertit aux clients que c'est fini.
+	int i = 0;
+	message *messageEcriture;
+	messageEcriture = initMessage();
+	joueur** j = p.joueurs;
+	for(i; i<p.inscrits; i++) {
+		messageEcriture->type = FERMERCLIENT; 
+		envoiMessageClient(j[i]->socket, messageEcriture);
+	}
+	
     exit(1);
 }
