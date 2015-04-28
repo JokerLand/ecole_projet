@@ -72,7 +72,7 @@ int main (int argc, char *argv[]) {
 			joueur** j = p.joueurs;
 			int i = 0;
 			printf("\nTIME OUT\n");
-
+			FD_ZERO(&rdfsAccept); // ensemble rdfsAccept remis à zero
 			for(i = 0; i<p.inscrits; i++) {
 				FD_SET(j[i]->socket, &rdfsAccept);
 			}
@@ -80,6 +80,7 @@ int main (int argc, char *argv[]) {
 			FD_SET(sockfd, &rdfsAccept); // Ajout du sockfd à l'ensemble rdfsAccept
 			// Ici on s'occupe que de l'inscirption pour le moment, donc je relance direct le timer :
 			tv.tv_sec  = TIMEOUT_SEC;
+		
 		} else {
 			int i = 0;
 			if(FD_ISSET(sockfd, &rdfsAccept)) {
@@ -109,22 +110,25 @@ int main (int argc, char *argv[]) {
 			}else {
 		
 		
-		
+
 				for(i = 0; i < p.inscrits; i++) {
-					int socketJoueur = p.joueurs[p.inscrits]->socket;
+
+					int socketJoueur = (p.joueurs[i])->socket;
+
 					int tailleMessage;
 					
 					if(FD_ISSET(socketJoueur, &rdfsAccept)){
-						tailleMessage = readMessage(s2, messageLecture);
-						
+
+						tailleMessage = readMessage(socketJoueur, messageLecture);
+
 						switch(messageLecture->type) {
 							
-							case INSCRIPTION : 	printf("#merde1");
-												nouveauJoueur(messageLecture->message, s2, CONNECTION);
+							case INSCRIPTION : 	
+												nouveauJoueur(messageLecture->message, socketJoueur, CONNECTION);
 												printf("SERV - %s inscrit\n", messageLecture->message);
 
 												messageEcriture->type = INSCRIPTIONOK;
-												envoiMessageClient(s2, messageEcriture);
+												envoiMessageClient(socketJoueur, messageEcriture);
 
 												if(p.inscrits == 1) { //TODO remplacer le 1 par une constance
 													alarm(10); // TODO remplacer par une constance
@@ -153,7 +157,7 @@ int main (int argc, char *argv[]) {
 		
 
 		} 
-		
+		FD_ZERO(&rdfsAccept); // ensemble rdfsAccept remis à zero
 		for(i = 0; i<p.inscrits; i++) {
 				FD_SET(j2[i]->socket, &rdfsAccept);
 			}
@@ -175,7 +179,7 @@ int nouveauJoueur(char *nom, int socket, int etat) {
 	
 	joueur * j;
 	int idJoueur = chercherJoueurParSocket(socket);
-	printf("#test0\n");
+
 	if(idJoueur == -1) {
 		printf("Problème !\n");
 	}
@@ -183,11 +187,11 @@ int nouveauJoueur(char *nom, int socket, int etat) {
 	
 	j->etat = etat;
 	j->socket = socket;
-	printf("#test1\n");
+
 	if(nom != NULL) {
 		strcpy(j->nom, nom);
 	}
-	printf("#test2\n");
+
 	j->score = INITSCORE;
 	p.joueurs[p.inscrits] = j;
 	p.inscrits++;
@@ -210,20 +214,21 @@ int chercherJoueurParSocket(int socket) {
 
 int ajouterClient(int socket) {
 	joueur *j ;
-	printf("la\n");
+
 	if((j = (joueur*) malloc(sizeof(joueur))) == NULL) {
 		perror("Erreur d'allocation de memoire dans le main");
 		exit(1);
 	}
-	printf("ici\n");
+
 	j->etat = CONNECTION;
 	j->socket = socket;
 	strcpy(j->nom, "");
-	printf("mouais\n");
+
 	j->score = INITSCORE;
 	p.joueurs[p.inscrits] = j;
 	p.inscrits++;
-	printf("Mince\n");
+
+
 	
 	return 1;
 }
