@@ -23,3 +23,5 @@ void commencerPartie();
 int nouveauJoueur(char *, int , int);
 void initServeur(int *);
 void fin(int);
+int ajouterClient(int);
+int chercherJoueurParSocket(int);

@@ -55,7 +55,8 @@ int main (int argc, char *argv[]) {
 	FD_SET(sockfd, &rdfsAccept); // Ajout du sockfd à l'ensemble rdfsAccept
 
     while (1) {
-
+		int i = 0;
+		joueur** j2 = p.joueurs;
 		reinitMessage(messageLecture);
 		reinitMessage(messageEcriture);
 
@@ -67,7 +68,7 @@ int main (int argc, char *argv[]) {
 				perror("select()\n");
 				exit(errno);
 			}
-		}else if(n == 0) {
+		}else if(n == 0) { //TimeOut du select 
 			joueur** j = p.joueurs;
 			int i = 0;
 			printf("\nTIME OUT\n");
@@ -80,50 +81,85 @@ int main (int argc, char *argv[]) {
 			// Ici on s'occupe que de l'inscirption pour le moment, donc je relance direct le timer :
 			tv.tv_sec  = TIMEOUT_SEC;
 		} else {
-
-		if(p.inscrits == MAX_JOUEURS) { // Refuser immédiatement le client
-				printf("SERV - Joueur à tente de se connecter mais a ete refuser par le serveur\n");
-				messageEcriture->type = INSCRIPTIONKO;
-				envoiMessageClient(s2, messageEcriture);
-				SYS(close(s2));
-
-		} else {
-			printf("Yop !\n");
-			if(FD_ISSET(sockfd, &rdfsAccept) ) { //Je check si le socket est bien dans l'ensemble pour ne pas devoir attendre une connection, histoire que le accepte ce passe directement
-
-				int tailleMessage;
-				temp = sizeof(skaddrClient);
-
-				if((s2 = accept(sockfd, (struct sockaddr *) &skaddrClient, &t)) == -1){
-					perror("SERV - Erreur d'accept\n");
-					exit(1);
-				}
-
-				printf("SERV - Un joueur connecte\n");
-				// Réception du premier message
-				tailleMessage = readMessage(s2, messageLecture);
-				if(messageLecture->type == INSCRIPTION) {
-					nouveauJoueur(messageLecture->message, s2, CONNECTION);
-					printf("SERV - %s inscrit\n", messageLecture->message);
-
-					messageEcriture->type = INSCRIPTIONOK;
+			int i = 0;
+			if(FD_ISSET(sockfd, &rdfsAccept)) {
+				
+				if(p.inscrits == MAX_JOUEURS) { // Refuser immédiatement le client
+					printf("SERV - Joueur à tente de se connecter mais a ete refuser par le serveur\n");
+					messageEcriture->type = INSCRIPTIONKO;
 					envoiMessageClient(s2, messageEcriture);
+					SYS(close(s2));
+				} else {
+					
+					temp = sizeof(skaddrClient);
 
-					if(p.inscrits == 1) { //TODO remplacer le 1 par une constance
-						alarm(10); // TODO remplacer par une constance
+					if((s2 = accept(sockfd, (struct sockaddr *) &skaddrClient, &t)) == -1){
+						perror("SERV - Erreur d'accept\n");
+						exit(1);
 					}
 
+					printf("SERV - Un joueur connecte\n");
+					
+					ajouterClient(s2);
 					maxSocket = s2 > maxSocket ? s2 : maxSocket;
 					s2 = 0;
-				} else {
-					// S'il demande pas l'inscritpion en premier, c'est que c'est un gars chelou, je préfère ne pas discuter avec lui
-					SYS(close(s2));
-
 				}
-			}
-		}
-		}
+				
+				
+			}else {
+		
+		
+		
+				for(i = 0; i < p.inscrits; i++) {
+					int socketJoueur = p.joueurs[p.inscrits]->socket;
+					int tailleMessage;
+					
+					if(FD_ISSET(socketJoueur, &rdfsAccept)){
+						tailleMessage = readMessage(s2, messageLecture);
+						
+						switch(messageLecture->type) {
+							
+							case INSCRIPTION : 	printf("#merde1");
+												nouveauJoueur(messageLecture->message, s2, CONNECTION);
+												printf("SERV - %s inscrit\n", messageLecture->message);
 
+												messageEcriture->type = INSCRIPTIONOK;
+												envoiMessageClient(s2, messageEcriture);
+
+												if(p.inscrits == 1) { //TODO remplacer le 1 par une constance
+													alarm(10); // TODO remplacer par une constance
+												}
+												break;
+												
+							case INSCRIPTIONOK : break;
+							case INSCRIPTIONKO : break;
+							case TUILEPIOCHE : break;
+							case TUILEOK : break;
+							case MONSCORE : break;
+							case PARTIEKO : break;
+							case LEAVE : break;
+							case FERMERCLIENT : break;
+							case BUFFERSIZE : break;
+						}//END SWICH
+						
+						
+					}			
+				}
+		
+			}
+		
+		
+		
+		
+
+		} 
+		
+		for(i = 0; i<p.inscrits; i++) {
+				FD_SET(j2[i]->socket, &rdfsAccept);
+			}
+
+		FD_SET(sockfd, &rdfsAccept); // Ajout du sockfd à l'ensemble rdfsAccept
+		
 	}//END WHILE (1)
 
 
@@ -136,21 +172,59 @@ return : retourne 0 si un problème est survenu, sinon 1;
 
 int nouveauJoueur(char *nom, int socket, int etat) {
 	//TODO Véirifier si un joueur ne possède pas déjà le même nom.
-
+	
 	joueur * j;
-	if((j = (joueur*) malloc(sizeof(joueur))) == NULL) {
-		perror("Erreur d'allocation de memoire dans le main");
-		exit(1);
+	int idJoueur = chercherJoueurParSocket(socket);
+	printf("#test0\n");
+	if(idJoueur == -1) {
+		printf("Problème !\n");
 	}
+	j = p.joueurs[idJoueur];
+	
 	j->etat = etat;
 	j->socket = socket;
+	printf("#test1\n");
 	if(nom != NULL) {
 		strcpy(j->nom, nom);
 	}
+	printf("#test2\n");
 	j->score = INITSCORE;
 	p.joueurs[p.inscrits] = j;
 	p.inscrits++;
 
+	return 1;
+}
+
+int chercherJoueurParSocket(int socket) {
+	joueur ** bal;
+	bal = p.joueurs;
+	int i = 0;
+	
+	for(i = 0; i < p.inscrits; i++) {
+		if(p.joueurs[i]->socket == socket) return i;
+	}
+	
+	return -1;
+}
+
+
+int ajouterClient(int socket) {
+	joueur *j ;
+	printf("la\n");
+	if((j = (joueur*) malloc(sizeof(joueur))) == NULL) {
+		perror("Erreur d'allocation de memoire dans le main");
+		exit(1);
+	}
+	printf("ici\n");
+	j->etat = CONNECTION;
+	j->socket = socket;
+	strcpy(j->nom, "");
+	printf("mouais\n");
+	j->score = INITSCORE;
+	p.joueurs[p.inscrits] = j;
+	p.inscrits++;
+	printf("Mince\n");
+	
 	return 1;
 }
 
