@@ -15,6 +15,7 @@ int main (int argc, char *argv[]) {
 	struct sockaddr_in skaddrServer, skaddrClient;
 	struct timeval tv;
 	char buffer[BUFFERSIZE] = "";
+	boolean alarmDemarree = FALSE;
 	fd_set rdfsAccept, readset, bal;
 	message *messageLecture;
 	message *messageEcriture;
@@ -71,7 +72,7 @@ int main (int argc, char *argv[]) {
 		}else if(n == 0) { //TimeOut du select 
 			joueur** j = p.joueurs;
 			int i = 0;
-			printf("\nTIME OUT\n");
+			printf("INFO - TIME OUT\n");
 			FD_ZERO(&rdfsAccept); // ensemble rdfsAccept remis à zero
 			for(i = 0; i<p.inscrits; i++) {
 				FD_SET(j[i]->socket, &rdfsAccept);
@@ -112,13 +113,10 @@ int main (int argc, char *argv[]) {
 		
 
 				for(i = 0; i < p.inscrits; i++) {
-
-					int socketJoueur = (p.joueurs[i])->socket;
-
+					int socketJoueur = p.joueurs[i]->socket;
 					int tailleMessage;
 					
 					if(FD_ISSET(socketJoueur, &rdfsAccept)){
-
 						tailleMessage = readMessage(socketJoueur, messageLecture);
 
 						switch(messageLecture->type) {
@@ -130,8 +128,10 @@ int main (int argc, char *argv[]) {
 												messageEcriture->type = INSCRIPTIONOK;
 												envoiMessageClient(socketJoueur, messageEcriture);
 
-												if(p.inscrits == 1) { //TODO remplacer le 1 par une constance
+												if(!alarmDemarree) { //TODO remplacer le 1 par une constance
+													printf("INFO - Lancement de l'alarm\n");
 													alarm(10); // TODO remplacer par une constance
+													alarmDemarree = TRUE;
 												}
 												break;
 												
@@ -194,7 +194,7 @@ int nouveauJoueur(char *nom, int socket, int etat) {
 
 	j->score = INITSCORE;
 	p.joueurs[p.inscrits] = j;
-	p.inscrits++;
+	//p.inscrits++;
 
 	return 1;
 }
