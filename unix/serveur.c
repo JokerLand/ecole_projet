@@ -235,12 +235,26 @@ int ajouterClient(int socket) {
 
 void commencerPartie(){
 	// Méthode qui s'occupera de lancer la partie. Pour l'instant, le serveur se coupe simplement.
+	int i = 0;
+	int key = 0;
+	
+	for(i = 0; i < p.inscrits; i ++) {
+		p->joueurs[i]->score = random(100);
+	}
+	
+	key = initMemoirePartagee();
+	
+	redacteur(key, &p);
+	
+	
+	printf("Ok ?\n");
+	fermetureSem() ;
 }
 
 void initServeur(int *sockfd) {
 
 // Affectation des signaux utilisés
-	if(signal(SIGALRM, fin)==SIG_ERR){
+	if(signal(SIGALRM, commencerPartie)==SIG_ERR){
 		perror("Signal : SIGALRM");
 	}
 		// Control-C
@@ -254,6 +268,8 @@ void initServeur(int *sockfd) {
 		perror("Erreur d'allocation de memoire dans le main");
 		exit(1);
 	}
+	
+	
 
 }
 
@@ -269,7 +285,8 @@ void fin(int socket){
 	for(i = 0; i<p.inscrits; i++) {
 		messageEcriture->type = FERMERCLIENT;
 		envoiMessageClient(j[i]->socket, messageEcriture);
+		SYS(close(j[i]->socket));
 	}
-
+	SYS(closte(socket));
     exit(1);
 }
