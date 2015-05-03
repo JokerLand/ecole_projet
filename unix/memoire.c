@@ -11,7 +11,7 @@ int initMemoirePartagee(){
         exit(-1);    
     }
     if((ptr = (joueur **) shmat(id,NULL,0)) ==  -1){
-        perror("Erreur lors de la lecture de la mémoire.");
+        perror("Erreur lors de la lecture de la mémoire");
         exit(-1);
     }
     memset(ptr, 0, sizeof(joueur*));
