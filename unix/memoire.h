@@ -1,7 +1,7 @@
 #include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
-#include "partie.h"
+#include "commun.h"
 
 #define ADRESSE 0x02200000
 

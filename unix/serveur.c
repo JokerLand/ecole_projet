@@ -239,7 +239,7 @@ void commencerPartie(){
 	int key = 0;
 	
 	for(i = 0; i < p.inscrits; i ++) {
-		p->joueurs[i]->score = random(100);
+		//p->joueurs[i]->score = random(100);
 	}
 	
 	key = initMemoirePartagee();
@@ -287,6 +287,6 @@ void fin(int socket){
 		envoiMessageClient(j[i]->socket, messageEcriture);
 		SYS(close(j[i]->socket));
 	}
-	SYS(closte(socket));
+	SYS(close(socket));
     exit(1);
 }

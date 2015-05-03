@@ -16,6 +16,7 @@
 #include <netdb.h>
 
 #include "messages.h"
+#include "memoire.h"
 
 #define TIMEOUT_SEC 15
 
