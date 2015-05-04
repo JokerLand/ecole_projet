@@ -10,7 +10,7 @@ int initMemoirePartagee(){
         perror("Erreur lors de la creation de l'adresse memoire partagée" );
         exit(-1);    
     }
-    if((ptr = (joueur **) shmat(id,NULL,0)) ==  -1){
+    if((ptr =( (joueur **) shmat(id,NULL,0))) == (joueur**) -1){
         perror("Erreur lors de la lecture de la mémoire");
         exit(-1);
     }
@@ -21,11 +21,11 @@ int initMemoirePartagee(){
 
 
 void fermerMemoirePartagee(int key, int id){
-   if (key) {
-        id = shmget(key, 0, 0);
-        if (id == -1)
-            return ;
-    }
+   // if (key) {
+        // id = shmget(key, 0, 0);
+        // if (id == -1)
+            // return ;
+    // }
 	SYS(shmctl(id, IPC_RMID, NULL));
 	
 
