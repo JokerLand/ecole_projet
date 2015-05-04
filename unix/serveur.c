@@ -236,19 +236,27 @@ int ajouterClient(int socket) {
 void commencerPartie(){
 	// Méthode qui s'occupera de lancer la partie. Pour l'instant, le serveur se coupe simplement.
 	int i = 0;
-	int key = 0;
+	int id = 0;
+	joueur ** j;
 	
 	for(i = 0; i < p.inscrits; i ++) {
-		//p->joueurs[i]->score = random(100);
+		p.joueurs[i]->score = 100*random();
 	}
 	
-	key = initMemoirePartagee();
+	id = initMemoirePartagee();
 	
-	redacteur(key, &p);
+	redacteur(id, &p);
 	
 	
 	printf("Ok ?\n");
+	printf("Test lecture des scores");
+	j = lecteur(id);
+	
+	for(i = 0; i < p.inscrits; i ++) {
+		printf("Nom : %s --- socre : %d",p.joueurs[i]->nom, p.joueurs[i]->score);
+	}
 	fermetureSem() ;
+	fermerMemoirePartagee(0,id);
 }
 
 void initServeur(int *sockfd) {

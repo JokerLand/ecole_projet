@@ -3,7 +3,7 @@
 
 
 key_t key_lock;
-int mutex, mem;
+int mutex = -1, mem = -1;
 int rc = 0; /*nb de process lisant ou voulant lire */
 struct sembuf sop;
 
@@ -67,6 +67,10 @@ void redacteur(int id, partie * p){
 	        perror("Erreur lors de la lecture de la mémoire");
 	       	exit(-1);
 	}
+	if(mem == -1) {
+		initMySem();
+	}
+	
 	down(&mem);
 	writeToMemory(j, p);
     up(&mem);
