@@ -237,7 +237,7 @@ void commencerPartie(){
 	// Méthode qui s'occupera de lancer la partie. Pour l'instant, le serveur se coupe simplement.
 	int i = 0;
 	int id = 0;
-	joueur ** j;
+	joueur ** jo;
 	
 	for(i = 0; i < p.inscrits; i ++) {
 		p.joueurs[i]->score = 100*random();
@@ -249,8 +249,9 @@ void commencerPartie(){
 	
 	
 	printf("Ok ?\n");
-	printf("Test lecture des scores");
-	j = lecteur(id);
+	printf("Test lecture des scores.");
+	//jo = lecteur(id);
+	lecteur(id);
 	
 	for(i = 0; i < p.inscrits; i ++) {
 		printf("Nom : %s --- socre : %d",p.joueurs[i]->nom, p.joueurs[i]->score);

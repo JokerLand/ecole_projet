@@ -86,8 +86,23 @@ int main(int argc, char *argv[]){
 		
 	while(1) {
 		recv(sockfd, messageLecture, sizeof(message), 0);
-		if(messageLecture->type == FERMERCLIENT)
-			fin(0);
+		
+		switch(messageLecture->type) {
+			case FERMERCLIENT :
+				fin(0);
+				break;
+			
+			case TUILEPIOCHE :
+				printf("Tuile %d\n La placée à l'indice :", messageLecture->numeroTuile);
+				SYS(sizeMessage = read(0,buffer,BUFFERSIZE));
+				messageEcriture->type=TUILEOK;
+				messageEcriture->numeroPlacement = atoi(buffer);
+				break;
+				
+			case MONSCORE :
+				printf("Votre score est : %d\n", messageLecture->message);
+				break;
+		}
 	}
 	
 	
