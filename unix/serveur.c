@@ -237,8 +237,8 @@ void commencerPartie(){
 	// Méthode qui s'occupera de lancer la partie. Pour l'instant, le serveur se coupe simplement.
 	int i = 0;
 	int id = 0;
-	joueur ** jo;
-	
+	void * jo;
+	joueur ** test;
 	for(i = 0; i < p.inscrits; i ++) {
 		p.joueurs[i]->score = 100*random();
 	}
@@ -249,13 +249,15 @@ void commencerPartie(){
 	
 	
 	printf("Ok ?\n");
-	printf("Test lecture des scores.");
-	//jo = lecteur(id);
-	lecteur(id);
+	printf("Test lecture des scores.\n");
+	lecteur(id, jo);
+	// lecteur(id);
 	
+	
+/* 	test = (joueur **) jo;
 	for(i = 0; i < p.inscrits; i ++) {
-		printf("Nom : %s --- socre : %d",p.joueurs[i]->nom, p.joueurs[i]->score);
-	}
+		printf("Nom : %s --- socre : %d\n",test[i]->nom, test[i]->score);
+	} */
 	fermetureSem() ;
 	fermerMemoirePartagee(0,id);
 }

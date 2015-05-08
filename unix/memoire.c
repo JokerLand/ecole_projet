@@ -5,16 +5,19 @@
 int initMemoirePartagee(){
     int id;
     joueur ** ptr;
+	key_t key_lock;
 	
-    if ((id = shmget(ADRESSE, (sizeof(joueur*) * 5), IPC_CREAT | 0600)) == -1){ 
+	SYS(key_lock = ftok(ADRESSE,(key_t)1)); // obtention de cle
+	SYS(id = shmget(key_lock,(sizeof(joueur*) * 5),IPC_CREAT|0644)); //creation de mutex
+/*     if ((id = shmget(ADRESSE, (sizeof(joueur*) * 5), IPC_CREAT | 0600)) == -1){ 
         perror("Erreur lors de la creation de l'adresse memoire partagée" );
         exit(-1);    
-    }
+    } */
     if((ptr =( (joueur **) shmat(id,NULL,0))) == (joueur**) -1){
         perror("Erreur lors de la lecture de la mémoire");
         exit(-1);
     }
-    memset(ptr, 0, sizeof(joueur*));
+    memset(ptr, 0, sizeof(joueur*)*5);
     return id;
 }
 
@@ -41,13 +44,14 @@ void writeToMemory(joueur **j, partie *p) {
 }
 
 
-joueur ** readMemory(int id) {
-	joueur ** j;
+void readMemory(int id, void * tabJoueurs) {
+	// joueur ** j;
+	int i = 0;
 	printf("Test lecture\n");
-	if((j = (joueur **) shmat(id,NULL,0))==(joueur **) -1){
-        perror("Erreur lors de la lecture de la mémoire");
-        exit(-1);
-    }
+	shmat(id,tabJoueurs,0);
+ 
+ 
+    
 	
-	return j;
+	// return j;
 }
