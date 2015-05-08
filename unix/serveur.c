@@ -7,6 +7,7 @@
 
 
 partie p ;
+int tuiles[40];
 
 
 
@@ -135,11 +136,7 @@ int main (int argc, char *argv[]) {
 												}
 												break;
 												
-							case INSCRIPTIONOK : break;
-							case INSCRIPTIONKO : break;
-							case TUILEPIOCHE : break;
 							case TUILEOK : break;
-							case MONSCORE : break;
 							case PARTIEKO : break;
 							case LEAVE : break;
 							case FERMERCLIENT : break;
@@ -243,10 +240,30 @@ void commencerPartie(){
 		p.joueurs[i]->score = 100*random();
 	}
 	
+	// Creation des tuiles
+	int num_tuile;
+	for(num_tuile=1; num_tuile<=40;num_tuile++) {
+		if(num_tuile>=11 && num_tuile<=19) {
+			tuiles[num_tuile] = 2;
+		}
+		else {
+			tuiles[num_tuile] = 1;
+		}
+	}
+	
 	id = initMemoirePartagee();
 	
 	redacteur(id, &p);
 	
+	// Choix de la première tuile pour lancer la partie
+	int tuile_choisie = (rand()%40)+1;
+	while(tuiles[tuile_choisie] == 0) { // Choisir une tuile tant qu'il n'y en a pas minimum une dans le tas
+		tuile_choisie = (rand()%40);
+	}
+	// Envoie de la tuile aux joueurs
+	messageEcriture->type=TUILEPIOCHE;
+	messageEcriture->numeroTuile = atoi(tuile_choisie);
+	envoiMessageClients(&p, messageEcriture);
 	
 	printf("Ok ?\n");
 	printf("Test lecture des scores.\n");
