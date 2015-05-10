@@ -94,10 +94,16 @@ int main(int argc, char *argv[]){
 			
 			case TUILEPIOCHE :
 				printf("Tuile %d\n La placée à l'indice :", messageLecture->numeroTuile);
-				SYS(sizeMessage = read(0,buffer,BUFFERSIZE));
-				messageEcriture->type=TUILEOK;
-				messageEcriture->numeroPlacement = atoi(buffer);
-				break;
+				while(1) {
+					SYS(sizeMessage = read(0,buffer,BUFFERSIZE));
+					int place = atoi(buffer);
+					if(c->plateau[place] != NULL) {
+						messageEcriture->type=TUILEOK;
+						messageEcriture->numeroPlacement = place;
+						break;
+					}
+					printf("La place sur le tableau est déjà prise, choisissez-en une autre...\n");
+				}
 				
 			case MONSCORE :
 				printf("Votre score est : %d\n", messageLecture->message);

@@ -16,7 +16,9 @@
 #define CONNECTION -2 //Le joueur est en cours d'inscription
 #define INITSCORE -1
 #define MAX_JOUEURS 2
+#define MIN_JOUEURS 2
 #define COMMENCEE 1
+#define NOMBRETOUR 20
 
 #define SYS(CALL) (((CALL) == -1)? (perror(#CALL ":Error"), exit(1)):0)
 
@@ -27,6 +29,7 @@ typedef struct joueur {
 	char nom[29];
 	int score;
 	int etat;
+	int numeroTour;
 } joueur;
 
 typedef struct partie {

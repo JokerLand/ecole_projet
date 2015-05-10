@@ -7,7 +7,7 @@
 
 
 partie p ;
-int tuiles[40], id;
+int tuiles[40];
 
 
 
@@ -18,9 +18,9 @@ int main (int argc, char *argv[]) {
 	char buffer[BUFFERSIZE] = "";
 	boolean alarmDemarree = FALSE;
 	fd_set rdfsAccept, readset, bal;
-	joueur j;
 	message *messageLecture;
 	message *messageEcriture;
+	joueur j;
 
 	if(argc < 2 || argc >3){
 		fprintf(stderr, "Usage : %s  port [fichier]\n", argv[0]);
@@ -57,7 +57,7 @@ int main (int argc, char *argv[]) {
 	FD_SET(sockfd, &rdfsAccept); // Ajout du sockfd à l'ensemble rdfsAccept
 
     while (1) {
-		int i = 0, tuile_choisie;
+		int i = 0;
 		joueur** j2 = p.joueurs;
 		reinitMessage(messageLecture);
 		reinitMessage(messageEcriture);
@@ -136,7 +136,12 @@ int main (int argc, char *argv[]) {
 												}
 												break;
 												
-							case TUILEOK : break;
+							case TUILEOK : 
+											p.joueurs[i]->numeroTour++;
+											if(p.joueurs[i]->numeroTour =! p.numeroTour) {
+												p.joueurs[i]->etat = DECO;
+											}
+											break;
 							case PARTIEKO : break;
 							case LEAVE : break;
 							case FERMERCLIENT : break;
@@ -144,25 +149,24 @@ int main (int argc, char *argv[]) {
 						}//END SWICH
 						
 						
-					}
+					}			
 				}
 		
 			}
-		
+
 		} 
 		
-		if(p.etat == COMMENCEE)
-		{
-			// Choix d'une tuile
-			tuile_choisie = (rand()%40)+1;
+		if(p.commencee && p.numeroTour < NOMBRETOUR) {
+			// Choix de la première tuile pour lancer la partie
+			int tuile_choisie = (rand()%40)+1;
 			while(tuiles[tuile_choisie] == 0) { // Choisir une tuile tant qu'il n'y en a pas minimum une dans le tas
 				tuile_choisie = (rand()%40);
 			}
 			// Envoie de la tuile aux joueurs
-			reinitMessage(messageEcriture);
 			messageEcriture->type=TUILEPIOCHE;
 			messageEcriture->numeroTuile = tuile_choisie;
 			envoiMessageClients(&p, messageEcriture);
+			p.numeroTour++;
 		}
 		
 		FD_ZERO(&rdfsAccept); // ensemble rdfsAccept remis à zero
@@ -241,30 +245,26 @@ int ajouterClient(int socket) {
 	return 1;
 }
 
-void commencerPartie(){
+void commencerPartie(){	
 	
-	joueur** j = p.joueurs;
-	int i;
-	
-	// Creation des tuiles
-	int num_tuile;
-	for(num_tuile=1; num_tuile<=40;num_tuile++) {
-		if(num_tuile>=11 && num_tuile<=19) {
-			tuiles[num_tuile] = 2;
-		}
-		else {
-			tuiles[num_tuile] = 1;
-		}
+	if(p.inscrits < MIN_JOUEURS) {
+		printf("Nombre de joueur insufisant...\n");
+		alarm(10);
 	}
-	
-	p.etat = COMMENCEE;
-	
-	id = initMemoirePartagee();
-	
-	for(i = 0; i<p.inscrits; i++) {
-		j[i]->etat = ACTIF;
+	else {
+		// Creation des tuiles
+		int num_tuile;
+		for(num_tuile=1; num_tuile<=40;num_tuile++) {
+			if(num_tuile>=11 && num_tuile<=19) {
+				tuiles[num_tuile] = 2;
+			}
+			else {
+				tuiles[num_tuile] = 1;
+			}
+		}
+		
+		p.commencee = TRUE;
 	}
-	
 }
 
 void initServeur(int *sockfd) {
@@ -304,7 +304,5 @@ void fin(int socket){
 		SYS(close(j[i]->socket));
 	}
 	SYS(close(socket));
-	fermetureSem() ;
-	fermerMemoirePartagee(0,id);
     exit(1);
 }
