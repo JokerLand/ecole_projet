@@ -7,9 +7,7 @@
 
 
 partie p ;
-int tuiles[40];
-message *messageLecture;
-message *messageEcriture;
+int tuiles[40], id;
 
 
 
@@ -21,6 +19,8 @@ int main (int argc, char *argv[]) {
 	boolean alarmDemarree = FALSE;
 	fd_set rdfsAccept, readset, bal;
 	joueur j;
+	message *messageLecture;
+	message *messageEcriture;
 
 	if(argc < 2 || argc >3){
 		fprintf(stderr, "Usage : %s  port [fichier]\n", argv[0]);
@@ -159,6 +159,7 @@ int main (int argc, char *argv[]) {
 				tuile_choisie = (rand()%40);
 			}
 			// Envoie de la tuile aux joueurs
+			reinitMessage(messageEcriture);
 			messageEcriture->type=TUILEPIOCHE;
 			messageEcriture->numeroTuile = tuile_choisie;
 			envoiMessageClients(&p, messageEcriture);
@@ -242,6 +243,9 @@ int ajouterClient(int socket) {
 
 void commencerPartie(){
 	
+	joueur** j = p.joueurs;
+	int i;
+	
 	// Creation des tuiles
 	int num_tuile;
 	for(num_tuile=1; num_tuile<=40;num_tuile++) {
@@ -255,7 +259,11 @@ void commencerPartie(){
 	
 	p.etat = COMMENCEE;
 	
-	initMemoirePartagee();
+	id = initMemoirePartagee();
+	
+	for(i = 0; i<p.inscrits; i++) {
+		j[i]->etat = ACTIF;
+	}
 	
 }
 
@@ -297,6 +305,6 @@ void fin(int socket){
 	}
 	SYS(close(socket));
 	fermetureSem() ;
-	//fermerMemoirePartagee(0,id);
+	fermerMemoirePartagee(0,id);
     exit(1);
 }

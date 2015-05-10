@@ -54,9 +54,13 @@ void envoiMessageClient(int socket ,message* m){
 
 void envoiMessageClients(partie* p, message* m){
 	int i;
+	joueur** j = p->joueurs;
     for (i=0; i<(p->inscrits); i++) {
-        if(p->joueurs[i]->etat==ACTIF){
-            envoiMessageClient(p->joueurs[i]->socket,m);
+		printf("ok1\n");
+		printf("%s\n", j[i]->nom);
+		printf("ok2\n");
+        if(j[i]->etat==ACTIF){
+            envoiMessageClient(j[i]->socket,m);
         }
     }
     reinitMessage(m);
