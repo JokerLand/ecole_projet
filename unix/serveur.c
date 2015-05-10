@@ -131,7 +131,7 @@ int main (int argc, char *argv[]) {
 
 												if(!alarmDemarree) { //TODO remplacer le 1 par une constance
 													printf("INFO - Lancement de l'alarm\n");
-													alarm(10); // TODO remplacer par une constance
+													alarm(TIMEOUT_SEC); // TODO remplacer par une constance
 													alarmDemarree = TRUE;
 												}
 												break;
@@ -146,6 +146,8 @@ int main (int argc, char *argv[]) {
 							case LEAVE : break;
 							case FERMERCLIENT : break;
 							case BUFFERSIZE : break;
+							case RCPLUS : rcPlus(); break;
+							case RCMOINS : rcMoins(); break;
 						}//END SWICH
 						
 						
@@ -249,7 +251,7 @@ void commencerPartie(){
 	
 	if(p.inscrits < MIN_JOUEURS) {
 		printf("Nombre de joueur insufisant...\n");
-		alarm(10);
+		alarm(TIMEOUT_SEC);
 	}
 	else {
 		// Creation des tuiles
