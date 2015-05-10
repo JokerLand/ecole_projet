@@ -21,7 +21,7 @@ void initMySem(){
 	SYS(semctl(mutex,0,SETVAL,1)); // init de mem
 }
 
-void lecteur(int id, void * tabJoueurs){
+void lecteur(int taille, joueur * tabJoueurs){
 	// /* joueur ** tabJoueurs; */
 	down(&mutex);//zone critique acces a rc
 	rc++;
@@ -31,7 +31,7 @@ void lecteur(int id, void * tabJoueurs){
 	up(&mutex); //liberer l'acces exclusif de rc
     
 	//lire les donnees
-	readMemory(id, tabJoueurs ); // lis tout les scores de tout les joueurs
+	tabJoueurs = readMemory(taille); // lis tout les scores de tout les joueurs
 	
 	down(&mutex);
     	rc--;
@@ -61,18 +61,18 @@ void up (int * semaphore) {
     SYS(semop(*semaphore, &sop, 1));
 }
 
-void redacteur(int id, partie * p){
+void redacteur(partie * p){
 	joueur ** j;
-	if((j = (joueur **) shmat(id,NULL,0))==(joueur **) -1){
+	/*if((j = (joueur **) shmat(id,NULL,0))==(joueur **) -1){
 	        perror("Erreur lors de la lecture de la mémoire");
 	       	exit(-1);
-	}
+	}*/
 	if(mem == -1) {
 		initMySem();
 	}
 	
 	down(&mem);
-	writeToMemory(j, p);
+	writeToMemory(p);
     up(&mem);
 	
 }

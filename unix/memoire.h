@@ -1,11 +1,15 @@
 #include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
+#include <errno.h>
 #include "commun.h"
 
 #define ADRESSE "serveur.h"
+#define POINTEURJOUEUR 0
 
 int initMemoirePartagee();
 void fermerMemoirePartagee(int, int);
-void writeToMemory(joueur **, partie *);
-void readMemory(int, void *);
+void writeToMemory(partie *);
+joueur * readMemory(int);
+void liaisonMemoire();
+int allouerPointeur(joueur * , int , int );

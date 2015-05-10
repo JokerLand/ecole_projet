@@ -24,3 +24,6 @@ memoire.o : memoire.c
 
 semaphore.o : semaphore.c
 	gcc -c semaphore.c -o semaphore.o
+	
+clear:
+	rm -rf *.o

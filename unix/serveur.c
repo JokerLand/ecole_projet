@@ -234,12 +234,12 @@ void commencerPartie(){
 	// Méthode qui s'occupera de lancer la partie. Pour l'instant, le serveur se coupe simplement.
 	int i = 0;
 	int id = 0;
-	void * jo;
+	joueur * jo= NULL;
 	joueur ** test;
 	for(i = 0; i < p.inscrits; i ++) {
 		p.joueurs[i]->score = 100*random();
 	}
-	
+/*	
 	// Creation des tuiles
 	int num_tuile;
 	for(num_tuile=1; num_tuile<=40;num_tuile++) {
@@ -249,12 +249,12 @@ void commencerPartie(){
 		else {
 			tuiles[num_tuile] = 1;
 		}
-	}
+	}*/
 	
 	id = initMemoirePartagee();
 	
-	redacteur(id, &p);
-	
+	redacteur(&p);
+/*	
 	// Choix de la première tuile pour lancer la partie
 	int tuile_choisie = (rand()%40)+1;
 	while(tuiles[tuile_choisie] == 0) { // Choisir une tuile tant qu'il n'y en a pas minimum une dans le tas
@@ -264,17 +264,17 @@ void commencerPartie(){
 	messageEcriture->type=TUILEPIOCHE;
 	messageEcriture->numeroTuile = atoi(tuile_choisie);
 	envoiMessageClients(&p, messageEcriture);
-	
+	*/
 	printf("Ok ?\n");
 	printf("Test lecture des scores.\n");
-	lecteur(id, jo);
+	lecteur(p.inscrits, jo);
 	// lecteur(id);
+	printf("jo : %d\n",jo);
 	
-	
-/* 	test = (joueur **) jo;
+ 	//test = (joueur **) jo;
 	for(i = 0; i < p.inscrits; i ++) {
-		printf("Nom : %s --- socre : %d\n",test[i]->nom, test[i]->score);
-	} */
+		printf("Nom : %s --- socre : %d\n",jo[i].nom, jo[i].score);
+	} 
 	fermetureSem() ;
 	fermerMemoirePartagee(0,id);
 }
