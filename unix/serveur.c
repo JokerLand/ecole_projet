@@ -8,6 +8,8 @@
 
 partie p ;
 int tuiles[40];
+message *messageLecture;
+message *messageEcriture;
 
 
 
@@ -18,8 +20,6 @@ int main (int argc, char *argv[]) {
 	char buffer[BUFFERSIZE] = "";
 	boolean alarmDemarree = FALSE;
 	fd_set rdfsAccept, readset, bal;
-	message *messageLecture;
-	message *messageEcriture;
 	joueur j;
 
 	if(argc < 2 || argc >3){
@@ -57,7 +57,7 @@ int main (int argc, char *argv[]) {
 	FD_SET(sockfd, &rdfsAccept); // Ajout du sockfd à l'ensemble rdfsAccept
 
     while (1) {
-		int i = 0;
+		int i = 0, tuile_choisie;
 		joueur** j2 = p.joueurs;
 		reinitMessage(messageLecture);
 		reinitMessage(messageEcriture);
@@ -144,16 +144,26 @@ int main (int argc, char *argv[]) {
 						}//END SWICH
 						
 						
-					}			
+					}
 				}
 		
 			}
 		
-		
-		
-		
-
 		} 
+		
+		if(p.etat == COMMENCEE)
+		{
+			// Choix d'une tuile
+			tuile_choisie = (rand()%40)+1;
+			while(tuiles[tuile_choisie] == 0) { // Choisir une tuile tant qu'il n'y en a pas minimum une dans le tas
+				tuile_choisie = (rand()%40);
+			}
+			// Envoie de la tuile aux joueurs
+			messageEcriture->type=TUILEPIOCHE;
+			messageEcriture->numeroTuile = tuile_choisie;
+			envoiMessageClients(&p, messageEcriture);
+		}
+		
 		FD_ZERO(&rdfsAccept); // ensemble rdfsAccept remis à zero
 		for(i = 0; i<p.inscrits; i++) {
 				FD_SET(j2[i]->socket, &rdfsAccept);
@@ -231,15 +241,7 @@ int ajouterClient(int socket) {
 }
 
 void commencerPartie(){
-	// Méthode qui s'occupera de lancer la partie. Pour l'instant, le serveur se coupe simplement.
-	int i = 0;
-	int id = 0;
-	joueur * jo= NULL;
-	joueur ** test;
-	for(i = 0; i < p.inscrits; i ++) {
-		p.joueurs[i]->score = 100*random();
-	}
-/*	
+	
 	// Creation des tuiles
 	int num_tuile;
 	for(num_tuile=1; num_tuile<=40;num_tuile++) {
@@ -249,34 +251,12 @@ void commencerPartie(){
 		else {
 			tuiles[num_tuile] = 1;
 		}
-	}*/
-	
-	id = initMemoirePartagee();
-	
-	redacteur(&p);
-/*	
-	// Choix de la première tuile pour lancer la partie
-	int tuile_choisie = (rand()%40)+1;
-	while(tuiles[tuile_choisie] == 0) { // Choisir une tuile tant qu'il n'y en a pas minimum une dans le tas
-		tuile_choisie = (rand()%40);
 	}
-	// Envoie de la tuile aux joueurs
-	messageEcriture->type=TUILEPIOCHE;
-	messageEcriture->numeroTuile = atoi(tuile_choisie);
-	envoiMessageClients(&p, messageEcriture);
-	*/
-	printf("Ok ?\n");
-	printf("Test lecture des scores.\n");
-	lecteur(p.inscrits, jo);
-	// lecteur(id);
-	printf("jo : %d\n",jo);
 	
- 	//test = (joueur **) jo;
-	for(i = 0; i < p.inscrits; i ++) {
-		printf("Nom : %s --- socre : %d\n",jo[i].nom, jo[i].score);
-	} 
-	fermetureSem() ;
-	fermerMemoirePartagee(0,id);
+	p.etat = COMMENCEE;
+	
+	initMemoirePartagee();
+	
 }
 
 void initServeur(int *sockfd) {
@@ -316,5 +296,7 @@ void fin(int socket){
 		SYS(close(j[i]->socket));
 	}
 	SYS(close(socket));
+	fermetureSem() ;
+	//fermerMemoirePartagee(0,id);
     exit(1);
 }
