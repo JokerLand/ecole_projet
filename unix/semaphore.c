@@ -1,5 +1,9 @@
+// Projet Unix 2014-2015
+// GILLES Gaëtan & STEENPUT Mathieu
+// S'occupe de la gestion des sémaphore
 #include "commun.h"
 #include "semaphore.h"
+#include "messages.h"
 
 
 key_t key_lock;
@@ -21,27 +25,33 @@ void initMySem(){
 	SYS(semctl(mutex,0,SETVAL,1)); // init de mem
 }
 
-joueur * lecteur(int taille){
+joueur * lecteur(int taille, client * c){
 	// /* joueur ** tabJoueurs; */
 	joueur * tabJoueurs;
-	down(&mutex);//zone critique acces a rc
-	rc++;
-	if(rc == 1){ // Si c'est le premier le lecteur ...
-	    down(&mem);
+	message *m;
+
+	if(c != NULL) {
+		
+		reinitMessage(m);
+		m->type = RCPLUS;
+		envoiMessageServeur(c, m);
+	} else {
+		rcPlus(); //C'est le serveur
+	
 	}
-	up(&mutex); //liberer l'acces exclusif de rc
-    
+	
 	//lire les donnees
 	tabJoueurs = readMemory(taille); // lis tout les scores de tout les joueurs
-	down(&mutex);
-    	rc--;
-    if(rc==0) { // Si c'est le dernier lecteur ...
-        up(&mem); 
-    }
-    up(&mutex); // libérer l'accas exclusif de rc
-    
-    //faire quelque chose des donnees
-    //Verifier que tout les scores sont >-1
+	
+	if(c != NULL) {
+		
+		reinitMessage(m);
+	m->type = RCMOINS;
+		envoiMessageServeur(c, m);
+	} else {
+		rcMoins(); //C'est le serveur
+	
+	}
 	return tabJoueurs;
 
 }
@@ -80,4 +90,23 @@ void redacteur(partie * p){
 void fermetureSem() {
     SYS(semctl(mutex,0,IPC_RMID,0)); // destruction de mutex
     SYS(semctl(mem,0,IPC_RMID,0)); // destruction de mem
+}
+
+void rcPlus() {
+down(&mutex);//zone critique acces a rc
+	rc++;
+	if(rc == 1){ // Si c'est le premier le lecteur ...
+	    down(&mem);
+	}
+	up(&mutex); //liberer l'acces exclusif de rc
+
+}
+
+void rcMoins() {
+down(&mutex);
+    	rc--;
+    if(rc==0) { // Si c'est le dernier lecteur ...
+        up(&mem); 
+    }
+    up(&mutex); // libérer l'accas exclusif de rc
 }

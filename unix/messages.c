@@ -45,6 +45,8 @@ void envoiMessageServeur(client* s, message* m){
     reinitMessage(m);
 }
 
+
+
 void envoiMessageClient(int socket ,message* m){
     if(send(socket,m,sizeof(message),0)==-1){
         fprintf(stderr,"Erreur d'envoi du message au Client\n");
@@ -56,9 +58,6 @@ void envoiMessageClients(partie* p, message* m){
 	int i;
 	joueur** j = p->joueurs;
     for (i=0; i<(p->inscrits); i++) {
-		printf("ok1\n");
-		printf("%s\n", j[i]->nom);
-		printf("ok2\n");
         if(j[i]->etat==ACTIF){
             envoiMessageClient(j[i]->socket,m);
         }

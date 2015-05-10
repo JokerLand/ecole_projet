@@ -1,3 +1,7 @@
+// Projet Unix 2014-2015
+// GILLES Gaëtan & STEENPUT Mathieu
+// Bibliothèque de memoire.c
+
 #include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>

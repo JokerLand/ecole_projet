@@ -28,7 +28,10 @@
 #define PARTIEKO 7
 #define LEAVE 8
 #define FERMERCLIENT 9
+#define RCPLUS 10
+#define RCMOINS 11
 #define BUFFERSIZE 40
+
 
 
 

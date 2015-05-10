@@ -1,3 +1,7 @@
+// Projet Unix 2014-2015
+// GILLES Gaëtan & STEENPUT Mathieu
+// Lis et écris dans la mémoire partagée
+
 #include "memoire.h"
 joueur *_tabJoueurs = NULL;
 static int _idMemoirePartagee = 0;
@@ -26,7 +30,6 @@ int initMemoirePartagee(){
         perror("Erreur lors de la lecture de la mémoire");
         exit(-1);
     }
-	printf("ptr %d\n",ptr);
 	
     memset(ptr, 0, sizeof(joueur*)*5);
 	
@@ -46,9 +49,9 @@ void writeToMemory(partie *p) {
 	
 	joueur * bal = NULL;
 	joueur *bal2 = NULL;
+	joueur** j = p->joueurs;
 	int i =0;
 	if(_tabJoueurs == NULL) {
-		printf("ecriture\n");
 		liaisonMemoire(); 
 	
 	}
@@ -58,17 +61,8 @@ void writeToMemory(partie *p) {
 	}	
 	_taillePhysique = p->inscrits;
 	
-	joueur** j = p->joueurs;
-    for (i=0; i<(p->inscrits); i++) {
-  printf("ok1\n");
-  printf("%s\n", j[i]->nom);
-	}
-	
 	
 	for(bal = p->joueurs[0], i = 0, bal2 = _tabJoueurs; i <(p->inscrits); i++, bal++, bal2++){
-		printf("donné de merde : %s  - %d\n", bal->nom, bal->score);
-		//printf("
-		
 		memcpy(bal2, bal, sizeof(joueur));
 	}
 }
@@ -82,7 +76,6 @@ joueur * readMemory(int taille) {
 
 	
 	if(_tabJoueurs == NULL) {
-		printf("lecture\n");
 		liaisonMemoire();
 	
 	}
@@ -90,24 +83,25 @@ joueur * readMemory(int taille) {
 	
 	
 	monTabJoueurs = (joueur*) malloc(sizeof(joueur)*taille);
-	printf("_____ %d\n",_tabJoueurs);
-	
 	for(i = 0; i <taille; i++) {
 		 monTabJoueurs[i] = _tabJoueurs[i];
-		 printf("monTabJoueur %s - %d\n",monTabJoueurs[i].nom, monTabJoueurs[i].score);
-		 printf("_tabJoueurs %s - %d\n",_tabJoueurs[i].nom, _tabJoueurs[i].score);
 	}
 	
 	
 	
-	printf("tabJoueur %d\n",monTabJoueurs);
 	return monTabJoueurs;
 }
 
 void liaisonMemoire() {
-	printf("_sdjfsdsdfs %d\n", _idMemoirePartagee);
-	SYS(_tabJoueurs =(joueur *) shmat(_idMemoirePartagee,0,SHM_RND));
-	printf("liaison %d\n",_tabJoueurs);
+	key_t key_lock;
+	if(_idMemoirePartagee != 0) {
+		_tabJoueurs =(joueur *) shmat(_idMemoirePartagee,0,SHM_RND);
+	} else {
+		SYS(key_lock = ftok(ADRESSE,(key_t)1)); // obtention de cle
+		_tabJoueurs =(joueur *) shmat(key_lock,0,SHM_RND)
+	}
+	
+	
 }
 
 
