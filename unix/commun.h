@@ -16,6 +16,7 @@
 #define CONNECTION -2 //Le joueur est en cours d'inscription
 #define INITSCORE -1
 #define MAX_JOUEURS 2
+#define COMMENCEE 1
 
 #define SYS(CALL) (((CALL) == -1)? (perror(#CALL ":Error"), exit(1)):0)
 
