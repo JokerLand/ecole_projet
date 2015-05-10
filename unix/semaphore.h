@@ -11,7 +11,7 @@
 
 void down( int *);
 void up(int *);
-void lecteur(int, joueur *);
+joueur * lecteur(int);
 void redacteur(partie*);
 void fermetureSem();
 void initMySem();

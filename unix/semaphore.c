@@ -21,8 +21,9 @@ void initMySem(){
 	SYS(semctl(mutex,0,SETVAL,1)); // init de mem
 }
 
-void lecteur(int taille, joueur * tabJoueurs){
+joueur * lecteur(int taille){
 	// /* joueur ** tabJoueurs; */
+	joueur * tabJoueurs;
 	down(&mutex);//zone critique acces a rc
 	rc++;
 	if(rc == 1){ // Si c'est le premier le lecteur ...
@@ -32,7 +33,6 @@ void lecteur(int taille, joueur * tabJoueurs){
     
 	//lire les donnees
 	tabJoueurs = readMemory(taille); // lis tout les scores de tout les joueurs
-	
 	down(&mutex);
     	rc--;
     if(rc==0) { // Si c'est le dernier lecteur ...
@@ -42,7 +42,7 @@ void lecteur(int taille, joueur * tabJoueurs){
     
     //faire quelque chose des donnees
     //Verifier que tout les scores sont >-1
-    // return tabJoueurs;
+	return tabJoueurs;
 
 }
 

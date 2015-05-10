@@ -6,10 +6,11 @@
 
 #define ADRESSE "serveur.h"
 #define POINTEURJOUEUR 0
+#define TAILLE_INITIAL 5
 
 int initMemoirePartagee();
 void fermerMemoirePartagee(int, int);
 void writeToMemory(partie *);
 joueur * readMemory(int);
 void liaisonMemoire();
-int allouerPointeur(joueur * , int , int );
+/* int allouerPointeur(joueur ** , int , int ); */
